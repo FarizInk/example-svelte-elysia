@@ -14,7 +14,7 @@ import {
   updateFile,
 } from "@/controllers/BasicController";
 
-const app = new Elysia()
+const app = new Elysia({ prefix: '/api' })
   .use(
     cron({
       name: "heartbeat",
@@ -69,12 +69,11 @@ const app = new Elysia()
       secret: process.env.JWT_SECRET,
     }),
   )
-  .group("/api", (route) =>
-    route
-      .get("/ticket", getTicket)
-      .post("/store", storeFile)
-      .post("/update/:identifier", updateFile)
-      .delete("/delete/:identifier", deleteFile));
+  .get("/ticket", getTicket)
+  .post("/store", storeFile)
+  .post("/update/:identifier", updateFile)
+  .delete("/delete/:identifier", deleteFile)
+  .compile();
 
 export const GET: RequestHandler = ({ request }) => app.handle(request);
 export const POST: RequestHandler = ({ request }) => app.handle(request);

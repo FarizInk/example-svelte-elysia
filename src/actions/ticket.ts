@@ -1,12 +1,13 @@
 import { ulid } from "ulid";
 import { prisma } from "@/helpers";
 
-export const createTicket = async () => {
+export const createTicket = async (applicationId: string | undefined = undefined) => {
   const ticketId = ulid();
 
   await prisma.ticket.create({
     data: {
       value: ticketId,
+      applicationId,
     },
   });
 

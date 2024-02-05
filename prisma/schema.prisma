@@ -16,26 +16,12 @@ model User {
   name         String
   password     String
   avatar       String?
+  isSuperUser  Boolean       @default(false)
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @default(now()) @updatedAt
   deletedAt    DateTime?
-  applications Application[]
   clients      Client[]
-}
-
-model Application {
-  id              String   @id @default(cuid())
-  user            User     @relation(fields: [userId], references: [id])
-  userId          String
-  client          Client   @relation(fields: [clientId], references: [id])
-  clientId        String
-  name            String
-  publicSecretKey String
-  secretSecretKey String
-  teleGroupId     String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @default(now()) @updatedAt
-  tickets         Ticket[]
+  applications Application[]
 }
 
 model Ticket {
@@ -54,11 +40,26 @@ model Client {
   user         User              @relation(fields: [userId], references: [id])
   userId       String
   name         String
-  session      String
+  session      String?           @unique
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @default(now()) @updatedAt
   applications Application[]
   channels     ClientOnChannel[]
+}
+
+model Application {
+  id          String   @id @default(cuid())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  client      Client   @relation(fields: [clientId], references: [id])
+  clientId    String
+  name        String
+  publicKey   String?  @unique
+  secretKey   String?  @unique
+  teleGroupId String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+  tickets     Ticket[]
 }
 
 model Channel {
@@ -82,13 +83,13 @@ model ClientOnChannel {
 }
 
 model File {
-  id            String   @id @default(cuid())
-  channel       Channel  @relation(fields: [channelId], references: [id])
-  channelId     String
-  identifier    String
-  extensionType String
-  extension     String
-  permission    String
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @default(now()) @updatedAt
+  id             String   @id @default(cuid())
+  channel        Channel  @relation(fields: [channelId], references: [id])
+  channelId      String
+  identifier     String
+  extensionType  String
+  extension      String
+  permission     String   @default("public")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now()) @updatedAt
 }
